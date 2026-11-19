@@ -67,7 +67,17 @@
   var quadro = document.getElementById('sistema'), abertura = document.getElementById('abertura'), sem = document.getElementById('semInternet');
   document.getElementById('abrirFora').href = SISTEMA;
   function semConexao(v) { sem.classList.toggle('oculta', !v); }
+  // iPhone/iPad (qualquer navegador no iOS) e Safari no Mac bloqueiam o login do Google dentro de outra página:
+  // nesses casos o sistema abre direto, sem a moldura.
+  var ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var safari = /Safari/.test(ua) && !/Chrome|Chromium|CriOS|Edg|Android/.test(ua);
   if (!navigator.onLine) { abertura.classList.add('oculta'); semConexao(true); }
+  else if (ios || safari) {
+    quadro.remove();
+    document.querySelector('#abertura p').textContent = 'Abrindo o sistema…';
+    setTimeout(function () { location.href = SISTEMA; }, 700);
+    setTimeout(function () { document.getElementById('ajudaLogin').style.display = 'block'; }, 4000);
+  }
   else {
     quadro.addEventListener('load', function () { setTimeout(function () { abertura.classList.add('oculta'); }, 500); });
     quadro.src = SISTEMA;
