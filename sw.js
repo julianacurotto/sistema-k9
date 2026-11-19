@@ -1,7 +1,7 @@
 // SISTEMA K9 — service worker da "casca" instalável.
 // Guarda só a casca (esta página, ícones e manifesto). Os dados do sistema NUNCA ficam no aparelho:
 // eles continuam no Google (Apps Script), e sem internet a casca mostra o aviso de "sem conexão".
-const VERSAO = 'k9-casca-v2';
+const VERSAO = 'k9-casca-v3';
 const ARQUIVOS = ['./', './index.html', './manifest.webmanifest', './icones/icone-192.png', './icones/icone-512.png',
   './icones/icone-maskable-512.png', './icones/apple-touch-icon.png', './icones/favicon-64.png'];
 
