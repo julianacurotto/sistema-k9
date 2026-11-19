@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SISTEMA K9 — CIOC/PMPR</title>
+<meta name="description" content="Plantel, treinos, manejo, ocorrências e certificação dos cães da PMPR.">
+<meta name="theme-color" content="#1c2c58">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SISTEMA K9">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icones/favicon-64.png">
+<link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
+<style>
+  :root{--navy:#1c2c58;--navy2:#26397a;--ouro:#f5b400}
+  html,body{margin:0;height:100%;background:var(--navy);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow:hidden}
+  #sistema{position:fixed;inset:0;width:100%;height:100%;border:0;background:#eef2f8}
+  .tela{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:24px;
+    background:radial-gradient(circle at 50% 30%,#2c4290 0%,var(--navy) 60%);transition:opacity .4s}
+  .tela.oculta{opacity:0;pointer-events:none}
+  .tela img{width:132px;height:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
+  .tela h1{margin:0;font:800 26px/1 ui-monospace,Consolas,monospace;letter-spacing:.14em}
+  .tela p{margin:0;opacity:.85;max-width:360px;line-height:1.45;font-size:15px}
+  .tela .lema{font:700 11px ui-monospace,Consolas,monospace;letter-spacing:.16em;color:var(--ouro)}
+  .roda{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:var(--ouro);animation:gira 1s linear infinite}
+  @keyframes gira{to{transform:rotate(360deg)}}
+  .btn{display:inline-block;margin-top:6px;padding:12px 20px;border-radius:12px;border:0;background:var(--ouro);color:#1c2c58;font:800 14px inherit;letter-spacing:.04em;text-decoration:none;cursor:pointer}
+  .btn.claro{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3)}
+  .ajuda{font-size:13px;opacity:.75;max-width:340px}
+  #ajudaLogin{display:none}
+  #fora{position:fixed;left:8px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:5;width:30px;height:30px;border-radius:50%;border:0;background:rgba(28,44,88,.55);color:#fff;font-size:15px;cursor:pointer;opacity:.6;transition:opacity .3s}
+  #fora:hover{opacity:1}
+  .assin{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom));font-size:11px;opacity:.55}
+</style>
+</head>
+<body>
+<iframe id="sistema" title="SISTEMA K9" allow="clipboard-read; clipboard-write; web-share; camera; microphone; geolocation; fullscreen"></iframe>
+
+<button id="fora" title="Problema para entrar? Abrir no navegador" onclick="window.open(SISTEMA,'_blank')">↗</button>
+<div class="tela" id="abertura">
+  <img src="icones/apple-touch-icon.png" alt="Brasão CIOC" onerror="this.style.display='none'">
+  <h1>SISTEMA K9</h1>
+  <div class="lema">⚡ IN CREDO CANIS FORTIS ⚡</div>
+  <div class="roda" aria-label="Carregando"></div>
+  <p>Carregando o sistema…</p>
+  <div id="ajudaLogin">
+    <p class="ajuda">Demorando? Se for o primeiro acesso, entre na sua conta <b>@pm.pr.gov.br</b> pelo navegador e volte aqui.</p>
+    <a class="btn" id="abrirFora" target="_blank" rel="noopener">Entrar pelo navegador</a>
+    <button class="btn claro" onclick="location.reload()">Tentar de novo</button>
+  </div>
+  <div class="assin">CIOC/PMPR · desenvolvido por Cb Juliana S. Curotto</div>
+</div>
+
+<div class="tela oculta" id="semInternet">
+  <img src="icones/apple-touch-icon.png" alt="" onerror="this.style.display='none'">
+  <h1>SEM INTERNET</h1>
+  <p>O SISTEMA K9 precisa de conexão para mostrar e salvar os dados. Nada é guardado no aparelho.</p>
+  <button class="btn" onclick="location.reload()">Tentar de novo</button>
+</div>
+
+<script>
+  // >>> Endereço do sistema (Apps Script). Se publicar uma nova implantação com outro link, troque aqui. <<<
+  var SISTEMA = 'https://script.google.com/a/macros/pm.pr.gov.br/s/AKfycbwtqZkKfkS8IwLhlI6STsUGjjAxoGEx3HgvkPXXmWwyb61lJg96PiFVRNG8lZXSKhO9/exec';
+
+  var quadro = document.getElementById('sistema'), abertura = document.getElementById('abertura'), sem = document.getElementById('semInternet');
+  document.getElementById('abrirFora').href = SISTEMA;
+  function semConexao(v) { sem.classList.toggle('oculta', !v); }
+  if (!navigator.onLine) { abertura.classList.add('oculta'); semConexao(true); }
+  else {
+    quadro.addEventListener('load', function () { setTimeout(function () { abertura.classList.add('oculta'); }, 500); });
+    quadro.src = SISTEMA;
+    // se em 12 s não abriu (geralmente falta entrar na conta Google), mostra a ajuda
+    setTimeout(function () { if (!abertura.classList.contains('oculta')) document.getElementById('ajudaLogin').style.display = 'block'; }, 12000);
+  }
+  window.addEventListener('offline', function () { semConexao(true); });
+  window.addEventListener('online', function () { semConexao(false); if (!quadro.src) location.reload(); });
+  // o botãozinho "↗" (abrir no navegador) some depois de 20 s para não atrapalhar
+  setTimeout(function () { var f = document.getElementById('fora'); if (f) f.style.display = 'none'; }, 20000);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { });
+</script>
+</body>
+</html>
